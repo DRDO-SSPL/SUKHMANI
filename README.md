@@ -4,6 +4,7 @@
 ### Cluster Analysis Overview
 
 ![Mental Health Groups Distribution](assets/mental%20health%20groups%20distribution.png)
+
 *Figure 1: Distribution of personnel across the three mental health clusters - High Health, Moderate Health, and Needs Support groups, showing the relative size of each cluster identified through the analysis.*
 
 ![Elbow Method](assets/elbow%20method.png)
