@@ -1,16 +1,6 @@
 
 ## Synthesis of Findings
 
-### Cluster Analysis Overview
-
-![Mental Health Groups Distribution](assets/mental%20health%20groups%20distribution.png)
-
-<p align="center"><em>Figure 1: Distribution of personnel across the three mental health clusters - High Health, Moderate Health, and Needs Support groups, showing the relative size of each cluster identified through the analysis.</em></p>
-
-![Elbow Method](assets/elbow%20method.png)
-
-<p align="center"><em>Figure 2: Elbow method visualization used to determine the optimal number of clusters (k=3) for the mental health assessment data, showing the point where adding more clusters provides diminishing returns.</em></p>
-
 ### Key Differentiating Questions
 
 The detailed cluster analysis revealed several key questions that effectively distinguish between the 'High Health', 'Moderate Health', and 'Needs Support' clusters. The most significant differentiators were questions related to:
@@ -25,6 +15,16 @@ These questions highlight that the clusters are not just defined by general mood
 ![Questions That Classified the Most](assets/questions%20that%20classified%20the%20most.png)
 
 <p align="center"><em>Figure 3: Key questions that showed the highest discriminatory power in distinguishing between the three mental health clusters, highlighting the most significant behavioral and psychological indicators.</em></p>
+
+### Cluster Analysis Overview
+
+![Mental Health Groups Distribution](assets/mental%20health%20groups%20distribution.png)
+
+<p align="center"><em>Figure 1: Distribution of personnel across the three mental health clusters - High Health, Moderate Health, and Needs Support groups, showing the relative size of each cluster identified through the analysis.</em></p>
+
+![Elbow Method](assets/elbow%20method.png)
+
+<p align="center"><em>Figure 2: Elbow method visualization used to determine the optimal number of clusters (k=3) for the mental health assessment data, showing the point where adding more clusters provides diminishing returns.</em></p>
 
 ### Demographic Patterns
 
