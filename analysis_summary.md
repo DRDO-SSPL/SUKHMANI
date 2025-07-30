@@ -1,6 +1,16 @@
 
 ## Synthesis of Findings
 
+### Cluster Analysis Overview
+
+![Mental Health Groups Distribution](assets/mental%20health%20groups%20distribution.png)
+
+<p align="center"><em>Figure 1: Distribution of personnel across the three mental health clusters - High Health, Moderate Health, and Needs Support groups, showing the relative size of each cluster identified through the analysis.</em></p>
+
+![Elbow Method](assets/elbow%20method.png)
+
+<p align="center"><em>Figure 2: Elbow method visualization used to determine the optimal number of clusters (k=3) for the mental health assessment data, showing the point where adding more clusters provides diminishing returns.</em></p>
+
 ### Key Differentiating Questions
 
 The detailed cluster analysis revealed several key questions that effectively distinguish between the 'High Health', 'Moderate Health', and 'Needs Support' clusters. The most significant differentiators were questions related to:
@@ -12,9 +22,25 @@ The detailed cluster analysis revealed several key questions that effectively di
 
 These questions highlight that the clusters are not just defined by general mood but by specific cognitive and emotional responses to stress and social situations.
 
+![Questions That Classified the Most](assets/questions%20that%20classified%20the%20most.png)
+
+<p align="center"><em>Figure 3: Key questions that showed the highest discriminatory power in distinguishing between the three mental health clusters, highlighting the most significant behavioral and psychological indicators.</em></p>
+
 ### Demographic Patterns
 
 The demographic analysis provided additional context to the cluster compositions:
+
+![Gender Distribution](assets/gender%20distribution.png)
+
+<p align="center"><em>Figure 4: Gender distribution across the three mental health clusters, showing the proportion of male and female personnel in each group and revealing subtle patterns in gender representation.</em></p>
+
+![Role Distribution Within Clusters](assets/Role%20distribution%20withi%20clusters.png)
+
+<p align="center"><em>Figure 5: Distribution of different military roles (ranks/positions) within each mental health cluster, illustrating how leadership positions and various roles are represented across the groups.</em></p>
+
+![Age Distribution with Clusters](assets/Age%20Distribution%20with%20clusters.png)
+
+<p align="center"><em>Figure 6: Age distribution patterns across the mental health clusters, demonstrating that mental readiness appears to be relatively independent of age factors.</em></p>
 
 - **Gender**: While both genders were present in all clusters, there was a slightly higher proportion of males in the 'Needs Support' group compared to the other clusters.
 - **Role**: Certain roles appeared to be more concentrated in specific clusters. For instance, leadership roles like 'Captain' and 'Major' were more prevalent in the 'High Health' cluster, while other roles were more evenly distributed or showed slight concentrations in the 'Moderate Health' or 'Needs Support' groups.
