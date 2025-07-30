@@ -370,46 +370,207 @@ elif page == "Individual Assessment":
     st.markdown('<h2 class="sub-header">Individual Assessment</h2>', unsafe_allow_html=True)
     
     st.markdown("""
-    ### Mental Health Assessment Tool
+    ### Comprehensive Mental Health Assessment Tool
     
-    This tool allows for individual assessment based on the trained model.
-    Answer the questions below to get a mental health readiness prediction.
+    This tool allows for individual assessment based on the trained model using all survey questions.
+    Please answer all questions honestly to get an accurate mental health readiness prediction.
     """)
     
-    # Create a simple assessment form
+    # Create comprehensive assessment form
     with st.form("assessment_form"):
-        st.subheader("Assessment Questions")
+        st.subheader("Personal Information")
+        col1, col2 = st.columns(2)
+        with col1:
+            age = st.number_input("Age", min_value=18, max_value=65, value=25)
+            gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+        with col2:
+            role = st.selectbox("Role", [
+                "Corporal", "Junior Warrant Officer", "Lieutenant Commander", 
+                "Flight Lieutenant", "Major", "Captain", "Sergeant", "Other"
+            ])
+            consent = st.checkbox("Do you consent to participate in this self-assessment survey?", value=True)
         
-        worry_level = st.slider("How much do you worry about different things compared to most people?", 1, 5, 3)
-        mental_health_perception = st.slider("How good do you think your mental health is compared to most people?", 1, 5, 3)
-        stress_handling = st.slider("How well do you handle stress in critical situations?", 1, 5, 3)
-        emotional_regulation = st.slider("How well can you identify and manage your emotional reactions?", 1, 5, 3)
-        decision_making = st.slider("How confident are you in making decisions under pressure?", 1, 5, 3)
+        st.subheader("Current Mental Health Status")
+        under_care = st.selectbox("Are you currently under any professional mental health care?", ["No", "Yes"])
         
-        submitted = st.form_submit_button("Get Assessment")
+        st.subheader("Stress Response & Crisis Management")
+        reaction_call = st.slider("What's your usual reaction when someone suddenly calls your name from behind? (1=Very startled, 5=Calm)", 1, 5, 3)
+        crisis_handling = st.slider("Would you rather deal with a crisis alone or involve others quickly? (1=Alone, 5=Involve others)", 1, 5, 3)
+        crisis_priority = st.slider("In a crisis, what do you do first? (1=Assist others, 5=Control own reaction)", 1, 5, 3)
+        pressure_reaction = st.slider("How do you react when under pressure? (1=Poor, 5=Excellent)", 1, 5, 3)
+        anxiety_handling = st.slider("What do you do when you feel anxious or overwhelmed? (1=Poor coping, 5=Excellent coping)", 1, 5, 3)
         
-        if submitted:
-            # Simple prediction logic (you can enhance this with the actual model)
-            avg_score = np.mean([worry_level, mental_health_perception, stress_handling, emotional_regulation, decision_making])
+        st.subheader("Daily Stress & Anxiety Assessment")
+        daily_stress = st.slider("Do you handle daily stress and problems effectively? (1=Never, 5=Always)", 1, 5, 3)
+        duty_overwhelm = st.slider("How often do you feel overwhelmed during duty? (1=Always, 5=Never)", 1, 5, 3)
+        worry_control = st.slider("Do you find it difficult to stop or control your worrying? (1=Always difficult, 5=Never difficult)", 1, 5, 3)
+        worry_level = st.slider("Do you worry about different things more than most people? (1=Much more, 5=Much less)", 1, 5, 3)
+        avoidance = st.slider("Do you avoid certain situations because of anxiety or fear? (1=Always, 5=Never)", 1, 5, 3)
+        panic_attacks = st.slider("Do you experience sudden panic or intense fear? (1=Very often, 5=Never)", 1, 5, 3)
+        relaxation = st.slider("Do you struggle to relax most days? (1=Always struggle, 5=Never struggle)", 1, 5, 3)
+        worry_prevention = st.slider("Do you believe worrying prevents bad things from happening? (1=Strongly believe, 5=Don't believe)", 1, 5, 3)
+        
+        st.subheader("Recovery & Coping Mechanisms")
+        unwind_ability = st.slider("Can you relax and unwind after duty without help? (1=Never, 5=Always)", 1, 5, 3)
+        recovery_time = st.slider("How long does it take you to recover from high-stress operations? (1=Very long, 5=Very quick)", 1, 5, 3)
+        coping_mechanisms = st.slider("Do you use personal coping mechanisms when under pressure? (1=None, 5=Very effective)", 1, 5, 3)
+        
+        st.subheader("Emotional Regulation & Decision Making")
+        emotional_management = st.slider("Can you identify and manage your emotional reactions in crisis? (1=Never, 5=Always)", 1, 5, 3)
+        decision_confidence = st.slider("Do you feel confident making quick decisions under pressure? (1=Never, 5=Always)", 1, 5, 3)
+        
+        st.subheader("Team Dynamics & Leadership")
+        team_conflicts = st.slider("Have you had recent interpersonal conflicts within your unit? (1=Many, 5=None)", 1, 5, 3)
+        teammate_violation = st.selectbox("What would you do if you see a teammate violating orders during a critical mission?", 
+                                        ["Ignore it", "Confront immediately", "Report after mission", "Discuss privately later", "Seek guidance"])
+        mistake_handling = st.selectbox("What would you do if you made a mistake affecting team performance?", 
+                                      ["Hide it", "Blame others", "Take responsibility immediately", "Fix quietly", "Seek help"])
+        
+        st.subheader("Purpose & Motivation")
+        sense_of_purpose = st.slider("Do you have a strong sense of purpose or mission? (1=None, 5=Very strong)", 1, 5, 3)
+        motivation = st.text_area("What motivates you to keep going when things get tough?", placeholder="Enter your motivation...")
+        
+        st.subheader("Overall Mental Health Perception")
+        mental_health_comparison = st.slider("Do you think your mental health is as good as most people's? (1=Much worse, 5=Much better)", 1, 5, 3)
+        future_hope = st.slider("Do you feel hopeful about your future most of the time? (1=Never, 5=Always)", 1, 5, 3)
+        relationships = st.slider("Are you satisfied with your relationships and social connections? (1=Very unsatisfied, 5=Very satisfied)", 1, 5, 3)
+        community_contribution = st.slider("Are you able to contribute to your community or society? (1=Never, 5=Always)", 1, 5, 3)
+        emotional_stability = st.slider("Do you feel emotionally stable today? (1=Very unstable, 5=Very stable)", 1, 5, 3)
+        
+        st.subheader("Communication & Support")
+        open_communication = st.slider("Can you talk openly with peers about emotions? (1=Never, 5=Always)", 1, 5, 3)
+        
+        st.subheader("Depression Screening (PHQ-9 Style)")
+        little_interest = st.selectbox("Little interest or pleasure in doing things", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        feeling_down = st.selectbox("Feeling down, depressed, or hopeless", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        sleep_trouble = st.selectbox("Trouble sleeping or sleeping too much", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        tired_energy = st.selectbox("Feeling tired or having little energy", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        appetite_changes = st.selectbox("Changes in appetite", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        feeling_failure = st.selectbox("Feeling bad about yourself or like a failure", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        concentration = st.selectbox("Trouble concentrating", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        slow_restless = st.selectbox("Moving or speaking unusually slowly or being fidgety", ["Not at all", "Several days", "More than half the days", "Nearly every day"])
+        
+        st.subheader("Critical Mental Health Indicators")
+        persistent_sadness = st.selectbox("Have you had a persistently sad, empty mood for the past two weeks?", ["No", "Yes", "Maybe"])
+        appetite_weight = st.selectbox("Have you experienced significant appetite or weight changes?", ["No", "Yes", "Maybe"])
+        suicidal_thoughts = st.selectbox("Are you currently experiencing any suicidal thoughts?", ["No", "Yes", "Prefer not to answer"])
+        
+        st.subheader("Support Systems")
+        emotional_support = st.slider("Do you feel emotionally supported by those around you? (1=Never, 5=Always)", 1, 5, 3)
+        team_support = st.slider("Do you feel supported by your team/unit? (1=Never, 5=Always)", 1, 5, 3)
+        isolation = st.slider("Do you feel isolated or disconnected? (1=Always, 5=Never)", 1, 5, 3)
+        
+        submitted = st.form_submit_button("Get Comprehensive Assessment", type="primary")
+        
+        if submitted and consent:
+            # Calculate scores for different categories
+            stress_scores = [reaction_call, crisis_handling, crisis_priority, pressure_reaction, anxiety_handling]
+            anxiety_scores = [daily_stress, duty_overwhelm, worry_control, worry_level, avoidance, panic_attacks, relaxation]
+            coping_scores = [unwind_ability, recovery_time, coping_mechanisms, emotional_management, decision_confidence]
+            wellbeing_scores = [mental_health_comparison, future_hope, relationships, community_contribution, emotional_stability]
+            support_scores = [emotional_support, team_support, isolation, open_communication]
             
-            if avg_score >= 4:
-                result = "High Health"
-                color = "green"
-            elif avg_score >= 3:
-                result = "Moderate Health"
-                color = "orange"
-            else:
-                result = "Needs Support"
+            # Convert text responses to numeric scores for depression screening
+            response_to_score = {"Not at all": 0, "Several days": 1, "More than half the days": 2, "Nearly every day": 3}
+            depression_items = [little_interest, feeling_down, sleep_trouble, tired_energy, appetite_changes, 
+                              feeling_failure, concentration, slow_restless]
+            depression_score = sum([response_to_score.get(item, 0) for item in depression_items])
+            
+            # Calculate overall assessment
+            avg_stress = np.mean(stress_scores)
+            avg_anxiety = np.mean(anxiety_scores)
+            avg_coping = np.mean(coping_scores)
+            avg_wellbeing = np.mean(wellbeing_scores)
+            avg_support = np.mean(support_scores)
+            
+            overall_score = np.mean([avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support])
+            
+            # Determine risk level
+            if depression_score >= 15 or suicidal_thoughts == "Yes":
+                risk_level = "High Risk"
                 color = "red"
-            
-            st.markdown(f"### Assessment Result: <span style='color:{color}'>{result}</span>", unsafe_allow_html=True)
-            
-            if result == "Needs Support":
-                st.warning("Consider seeking additional support or counseling.")
-            elif result == "Moderate Health":
-                st.info("Maintain current wellness practices and monitor mental health regularly.")
+                recommendation = "🚨 **IMMEDIATE ATTENTION REQUIRED** - Please seek professional help immediately."
+            elif depression_score >= 10 or overall_score <= 2.5:
+                risk_level = "Moderate Risk"
+                color = "orange"
+                recommendation = "⚠️ Consider seeking professional counseling and support services."
+            elif overall_score <= 3.5:
+                risk_level = "Some Concerns"
+                color = "yellow"
+                recommendation = "💡 Monitor mental health closely and consider preventive measures."
             else:
-                st.success("Excellent mental health status!")
+                risk_level = "Good Mental Health"
+                color = "green"
+                recommendation = "✅ Continue maintaining current wellness practices."
+            
+            # Display results
+            st.markdown("---")
+            st.markdown("## Assessment Results")
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Overall Risk Level", risk_level)
+                st.markdown(f"<div style='color:{color}; font-weight:bold;'>{recommendation}</div>", unsafe_allow_html=True)
+            
+            with col2:
+                st.metric("Depression Score (PHQ-9)", f"{depression_score}/24")
+                if depression_score >= 15:
+                    st.error("Severe depression symptoms detected")
+                elif depression_score >= 10:
+                    st.warning("Moderate depression symptoms")
+                elif depression_score >= 5:
+                    st.info("Mild depression symptoms")
+                else:
+                    st.success("Minimal depression symptoms")
+            
+            with col3:
+                st.metric("Overall Wellness Score", f"{overall_score:.1f}/5.0")
+            
+            # Detailed breakdown
+            st.subheader("Detailed Category Scores")
+            categories_df = pd.DataFrame({
+                'Category': ['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems'],
+                'Score': [avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support],
+                'Status': [
+                    'Good' if avg_stress >= 3.5 else 'Needs Attention',
+                    'Good' if avg_anxiety >= 3.5 else 'Needs Attention',
+                    'Good' if avg_coping >= 3.5 else 'Needs Attention',
+                    'Good' if avg_wellbeing >= 3.5 else 'Needs Attention',
+                    'Good' if avg_support >= 3.5 else 'Needs Attention'
+                ]
+            })
+            st.dataframe(categories_df, use_container_width=True)
+            
+            # Visualization
+            fig_radar = go.Figure()
+            fig_radar.add_trace(go.Scatterpolar(
+                r=[avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support],
+                theta=['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems'],
+                fill='toself',
+                name='Your Scores'
+            ))
+            fig_radar.update_layout(
+                polar=dict(radialaxis=dict(visible=True, range=[0, 5])),
+                showlegend=True,
+                title="Mental Health Assessment Radar Chart"
+            )
+            st.plotly_chart(fig_radar, use_container_width=True)
+            
+            # Additional recommendations based on specific areas
+            st.subheader("Personalized Recommendations")
+            if avg_stress < 3.5:
+                st.write("🔹 **Stress Management**: Consider stress reduction techniques like deep breathing, meditation, or physical exercise.")
+            if avg_anxiety < 3.5:
+                st.write("🔹 **Anxiety Support**: Practice mindfulness techniques and consider talking to a counselor about anxiety management strategies.")
+            if avg_coping < 3.5:
+                st.write("🔹 **Coping Skills**: Develop a toolkit of healthy coping mechanisms such as journaling, physical activity, or creative outlets.")
+            if avg_wellbeing < 3.5:
+                st.write("🔹 **Overall Wellbeing**: Focus on work-life balance, maintain social connections, and engage in activities you enjoy.")
+            if avg_support < 3.5:
+                st.write("🔹 **Support Systems**: Strengthen relationships with colleagues, friends, and family. Don't hesitate to reach out for help.")
+        
+        elif submitted and not consent:
+            st.error("Please provide consent to participate in the assessment.")
 
 # Footer
 st.markdown("---")
