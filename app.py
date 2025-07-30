@@ -244,18 +244,20 @@ elif page == "Data Analysis":
         
         with col2:
             st.subheader("Data Summary")
-            if 'Total_Sentiment_Score' in df.columns:
+            if df_processed is not None and 'Total_Sentiment_Score' in df_processed.columns:
                 st.write("**Sentiment Score Statistics:**")
-                st.write(df['Total_Sentiment_Score'].describe())
+                st.write(df_processed['Total_Sentiment_Score'].describe())
                 
                 # Sentiment score distribution
                 fig_hist = px.histogram(
-                    df, 
+                    df_processed, 
                     x='Total_Sentiment_Score',
                     title="Distribution of Total Sentiment Scores",
                     nbins=20
                 )
                 st.plotly_chart(fig_hist, use_container_width=True)
+            else:
+                st.info("Sentiment analysis in progress... Please wait for data processing to complete.")
     else:
         st.error("No data available for analysis.")
 
