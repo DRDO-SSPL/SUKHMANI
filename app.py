@@ -241,6 +241,73 @@ elif page == "Data Analysis":
             st.write(f"**Shape:** {df.shape[0]} rows × {df.shape[1]} columns")
             st.write("**Sample Data:**")
             st.dataframe(df.head(), use_container_width=True)
+            
+            # Add search functionality
+            st.subheader("🔍 Personnel Search")
+            search_name = st.text_input("Search by Name:", placeholder="Enter personnel name...")
+            
+            if search_name:
+                # Search for matching names (case-insensitive)
+                matching_personnel = df[df['Name'].str.contains(search_name, case=False, na=False)]
+                
+                if not matching_personnel.empty:
+                    st.success(f"Found {len(matching_personnel)} matching personnel:")
+                    
+                    # Display matching personnel with key information
+                    display_cols = ['Name', 'Age', 'Gender', 'Role']
+                    if df_processed is not None and 'Total_Sentiment_Score' in df_processed.columns:
+                        # Add sentiment score if available
+                        matching_with_scores = matching_personnel.copy()
+                        matching_indices = matching_personnel.index
+                        matching_with_scores['Total_Sentiment_Score'] = df_processed.loc[matching_indices, 'Total_Sentiment_Score']
+                        display_cols.append('Total_Sentiment_Score')
+                        
+                        # Add cluster information if available
+                        if 'Sentiment_Cluster' in df_processed.columns:
+                            cluster_mapping = {0: 'High Health', 1: 'Moderate Health', 2: 'Needs Support'}
+                            matching_with_scores['Mental_Health_Group'] = df_processed.loc[matching_indices, 'Sentiment_Cluster'].map(cluster_mapping)
+                            display_cols.append('Mental_Health_Group')
+                        
+                        st.dataframe(matching_with_scores[display_cols], use_container_width=True)
+                    else:
+                        st.dataframe(matching_personnel[display_cols], use_container_width=True)
+                        
+                    # Show detailed view for exact matches
+                    exact_matches = df[df['Name'].str.lower() == search_name.lower()]
+                    if not exact_matches.empty:
+                        st.subheader("📋 Detailed Information")
+                        selected_person = exact_matches.iloc[0]
+                        
+                        col_a, col_b, col_c = st.columns(3)
+                        with col_a:
+                            st.metric("Name", selected_person['Name'])
+                            st.metric("Age", selected_person['Age'])
+                        with col_b:
+                            st.metric("Gender", selected_person['Gender'])
+                            st.metric("Role", selected_person['Role'])
+                        with col_c:
+                            if df_processed is not None and 'Total_Sentiment_Score' in df_processed.columns:
+                                person_idx = exact_matches.index[0]
+                                sentiment_score = df_processed.loc[person_idx, 'Total_Sentiment_Score']
+                                st.metric("Sentiment Score", f"{sentiment_score:.2f}")
+                                
+                                if 'Sentiment_Cluster' in df_processed.columns:
+                                    cluster = df_processed.loc[person_idx, 'Sentiment_Cluster']
+                                    cluster_name = {0: 'High Health', 1: 'Moderate Health', 2: 'Needs Support'}[cluster]
+                                    color = {'High Health': 'green', 'Moderate Health': 'orange', 'Needs Support': 'red'}[cluster_name]
+                                    st.markdown(f"**Mental Health Group:** <span style='color:{color}'>{cluster_name}</span>", unsafe_allow_html=True)
+                else:
+                    st.warning(f"No personnel found with name containing '{search_name}'. Please check the spelling or try a different search term.")
+                    
+                    # Show suggestions - names that are similar
+                    all_names = df['Name'].str.lower().tolist()
+                    search_lower = search_name.lower()
+                    suggestions = [name for name in df['Name'].unique() if search_lower in name.lower()]
+                    
+                    if suggestions:
+                        st.info("**Suggestions:**")
+                        for suggestion in suggestions[:5]:  # Show max 5 suggestions
+                            st.write(f"• {suggestion}")
         
         with col2:
             st.subheader("Data Summary")
@@ -476,14 +543,18 @@ elif page == "Individual Assessment":
                               feeling_failure, concentration, slow_restless]
             depression_score = sum([response_to_score.get(item, 0) for item in depression_items])
             
-            # Calculate overall assessment
+            # Create Clinical Risk Indicator (inverted scale: higher PHQ-9 = lower wellness)
+            # Convert PHQ-9 score (0-24) to wellness scale (1-5)
+            clinical_risk_score = max(1, 5 - (depression_score / 6))  # Inverse relationship
+            
+            # Calculate overall assessment (now includes 6 dimensions)
             avg_stress = np.mean(stress_scores)
             avg_anxiety = np.mean(anxiety_scores)
             avg_coping = np.mean(coping_scores)
             avg_wellbeing = np.mean(wellbeing_scores)
             avg_support = np.mean(support_scores)
             
-            overall_score = np.mean([avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support])
+            overall_score = np.mean([avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support, clinical_risk_score])
             
             # Determine risk level
             if depression_score >= 15 or suicidal_thoughts == "Yes":
@@ -525,34 +596,104 @@ elif page == "Individual Assessment":
             
             with col3:
                 st.metric("Overall Wellness Score", f"{overall_score:.1f}/5.0")
+                
+            # New Clinical Risk Indicator
+            col4, col5, col6 = st.columns(3)
+            with col4:
+                st.metric("Clinical Risk Indicator", f"{clinical_risk_score:.1f}/5.0")
+                if clinical_risk_score >= 4:
+                    st.success("Low clinical risk")
+                elif clinical_risk_score >= 3:
+                    st.info("Moderate clinical risk")
+                elif clinical_risk_score >= 2:
+                    st.warning("Elevated clinical risk")
+                else:
+                    st.error("High clinical risk - requires attention")
             
-            # Detailed breakdown
+            with col5:
+                # Risk severity based on PHQ-9 clinical standards
+                if depression_score <= 1:
+                    risk_severity = "Perfect Mental Health"
+                    severity_color = "darkgreen"
+                elif depression_score <= 4:
+                    risk_severity = "Minimal Depression"
+                    severity_color = "green"
+                elif depression_score <= 9:
+                    risk_severity = "Mild Depression"
+                    severity_color = "blue"
+                elif depression_score <= 14:
+                    risk_severity = "Moderate Depression" 
+                    severity_color = "orange"
+                elif depression_score <= 19:
+                    risk_severity = "Moderately Severe Depression"
+                    severity_color = "red"
+                else:
+                    risk_severity = "Severe Depression"
+                    severity_color = "darkred"
+                
+                st.metric("Depression Severity", risk_severity)
+                st.markdown(f"<div style='color:{severity_color}; font-size:0.8rem;'>PHQ-9 Clinical Classification</div>", unsafe_allow_html=True)
+            
+            with col6:
+                # Treatment recommendation based on clinical guidelines
+                if depression_score <= 1:
+                    treatment_rec = "Excellent"
+                elif depression_score <= 4:
+                    treatment_rec = "Monitor & Maintain"
+                elif depression_score <= 9:
+                    treatment_rec = "Watchful Waiting"
+                elif depression_score <= 14:
+                    treatment_rec = "Treatment Recommended"
+                else:
+                    treatment_rec = "Treatment Required"
+                
+                st.metric("Clinical Recommendation", treatment_rec)
+            
+            # Detailed breakdown (now with 6 categories)
             st.subheader("Detailed Category Scores")
             categories_df = pd.DataFrame({
-                'Category': ['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems'],
-                'Score': [avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support],
+                'Category': ['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems', 'Clinical Risk'],
+                'Score': [avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support, clinical_risk_score],
                 'Status': [
                     'Good' if avg_stress >= 3.5 else 'Needs Attention',
                     'Good' if avg_anxiety >= 3.5 else 'Needs Attention',
                     'Good' if avg_coping >= 3.5 else 'Needs Attention',
                     'Good' if avg_wellbeing >= 3.5 else 'Needs Attention',
-                    'Good' if avg_support >= 3.5 else 'Needs Attention'
+                    'Good' if avg_support >= 3.5 else 'Needs Attention',
+                    'Low Risk' if clinical_risk_score >= 3.5 else 'Clinical Concern'
                 ]
             })
             st.dataframe(categories_df, use_container_width=True)
             
-            # Visualization
+            # Enhanced 6-Dimension Radar Chart
             fig_radar = go.Figure()
             fig_radar.add_trace(go.Scatterpolar(
-                r=[avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support],
-                theta=['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems'],
+                r=[avg_stress, avg_anxiety, avg_coping, avg_wellbeing, avg_support, clinical_risk_score],
+                theta=['Stress Response', 'Anxiety Management', 'Coping Skills', 'Overall Wellbeing', 'Support Systems', 'Clinical Risk'],
                 fill='toself',
-                name='Your Scores'
+                name='Your Scores',
+                line_color='rgb(32, 146, 230)',
+                fillcolor='rgba(32, 146, 230, 0.25)'
             ))
             fig_radar.update_layout(
-                polar=dict(radialaxis=dict(visible=True, range=[0, 5])),
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True, 
+                        range=[0, 5],
+                        tickfont=dict(size=10),
+                        gridcolor='lightgray'
+                    ),
+                    angularaxis=dict(
+                        tickfont=dict(size=11)
+                    )
+                ),
                 showlegend=True,
-                title="Mental Health Assessment Radar Chart"
+                title={
+                    'text': "Comprehensive Mental Health Assessment Radar Chart",
+                    'x': 0.5,
+                    'font': {'size': 16}
+                },
+                height=600
             )
             st.plotly_chart(fig_radar, use_container_width=True)
             
@@ -568,6 +709,38 @@ elif page == "Individual Assessment":
                 st.write("🔹 **Overall Wellbeing**: Focus on work-life balance, maintain social connections, and engage in activities you enjoy.")
             if avg_support < 3.5:
                 st.write("🔹 **Support Systems**: Strengthen relationships with colleagues, friends, and family. Don't hesitate to reach out for help.")
+            if clinical_risk_score < 3.5:
+                st.write("🔹 **Clinical Attention**: PHQ-9 indicators suggest potential depression symptoms. Consider professional mental health evaluation.")
+            
+            # Clinical interpretation section
+            st.subheader("Clinical Assessment Interpretation")
+            st.markdown(f"""
+            **PHQ-9 Depression Screening Results:**
+            - **Raw Score**: {depression_score}/24
+            - **Clinical Risk Score**: {clinical_risk_score:.1f}/5.0 (Higher = Better)
+            - **Severity Level**: {risk_severity}
+            - **Recommendation**: {treatment_rec}
+            
+            **Clinical Guidelines:**
+            - 0-1: Perfect mental health - Excellent psychological state
+            - 2-4: Minimal depression symptoms
+            - 5-9: Mild depression symptoms  
+            - 10-14: Moderate depression symptoms
+            - 15-19: Moderately severe depression symptoms
+            - 20-24: Severe depression symptoms
+            """)
+            
+            # Show breakdown of PHQ-9 responses
+            if depression_score > 0:
+                st.subheader("Depression Screening Breakdown")
+                phq9_breakdown = pd.DataFrame({
+                    'Symptom': ['Interest/Pleasure', 'Feeling Down', 'Sleep Issues', 'Energy/Fatigue', 
+                               'Appetite Changes', 'Self-Worth', 'Concentration', 'Psychomotor'],
+                    'Response': [little_interest, feeling_down, sleep_trouble, tired_energy, 
+                               appetite_changes, feeling_failure, concentration, slow_restless],
+                    'Score': [response_to_score.get(item, 0) for item in depression_items]
+                })
+                st.dataframe(phq9_breakdown, use_container_width=True)
         
         elif submitted and not consent:
             st.error("Please provide consent to participate in the assessment.")
