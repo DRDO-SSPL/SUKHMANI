@@ -48,7 +48,7 @@ The demographic analysis provided additional context to the cluster compositions
 
 ### Predictive Modeling Results
 
-The predictive modeling demonstrated that mental readiness, as categorized by the clusters, is highly predictable from the assessment data. The Random Forest Classifier achieved an **accuracy of 85%** on the test set. This high accuracy indicates that the sentiment scores derived from the responses are strong predictors of an individual's mental readiness group. The model's strong performance across all clusters, with high precision and recall, further validates the robustness of the clustering and the underlying sentiment analysis.
+The predictive modeling demonstrated that mental readiness, as categorized by the clusters, is highly predictable from the assessment data. The Random Forest Classifier achieved an **ACCURACY OF 85%** on the test set. This high accuracy indicates that the sentiment scores derived from the responses are strong predictors of an individual's mental readiness group. The model's strong performance across all clusters, with high precision and recall, further validates the robustness of the clustering and the underlying sentiment analysis.
 
 ### Conclusion and Recommendations
 
