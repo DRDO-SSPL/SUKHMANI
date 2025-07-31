@@ -1,3 +1,8 @@
+##  Live Demo
+
+**[Try the app here](https://mindfit-drdo.streamlit.app/)**
+
+---
 
 ## Synthesis of Findings
 
